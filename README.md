@@ -9,4 +9,4 @@ This is the TensorFlow implementation of the StackGAN proposed by Han Zhang et a
 # Work under construction!
 
 
-[1] https://arxiv.org/abs/1612.03242
+[1]: https://arxiv.org/abs/1612.03242
