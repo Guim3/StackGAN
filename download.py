@@ -7,7 +7,6 @@ Downloads the following:
 - Oxford-102 dataset
 """
 
-from __future__ import print_function
 import os
 import sys
 import argparse
