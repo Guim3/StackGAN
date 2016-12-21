@@ -1,5 +1,6 @@
-# Pycharm files
+# Pycharm files and folders
 *.xml
 *.iml
+.idea
 # Datasets folders
-.data
+data
