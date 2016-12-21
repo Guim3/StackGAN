@@ -10,10 +10,10 @@ Downloads the following:
 from __future__ import print_function
 import os
 import sys
-import zipfile
 import argparse
 from six.moves import urllib
 import tarfile
+
 
 parser = argparse.ArgumentParser(description='Download dataset for StackGAN.')
 parser.add_argument('datasets', metavar='D', type=str.lower, nargs='+', choices=['cub', 'oxford-102'],
@@ -50,14 +50,7 @@ def download(url, dirpath):
     return filepath
 
 
-def unzip(filepath):
-    print("Extracting: " + filepath)
-    dirpath = os.path.dirname(filepath)
-    with zipfile.ZipFile(filepath) as zf:
-        zf.extractall(dirpath)
-    os.remove(filepath)
-
-
+# Extract
 def extract_tar(tar_path, extract_path='.'):
     tar = tarfile.open(tar_path, 'r')
     for item in tar:
@@ -66,30 +59,13 @@ def extract_tar(tar_path, extract_path='.'):
             tar.extract(item, extract_path)
             if item.name.find('.tgz') != -1 or item.name.find('.tar') != -1:
                 extract_tar(item.name, extract_path + '/' + item.name[:item.name.rfind('/')])
-
-
-def download_oxford_102(dirpath):
-    print('Not implemented yet!!')
-    return
-
-    data_dir = os.path.join(dirpath, 'oxford-102')
-    if os.path.exists(data_dir):
-        print('Found Oxford-102 - skip')
-        return
-    else:
-        os.mkdir(data_dir)
-    url = 'http://www.robots.ox.ac.uk/~vgg/data/flowers/102/102flowers.tgz'
-    filepath = download(url, data_dir)
-
-    url = 'http://www.robots.ox.ac.uk/~vgg/data/flowers/102/imagelabels.mat'
-    filepath = download(url, data_dir)
+    os.remove(tar_path)
 
 
 # Download and extracts the fila at url
-def download_extract(url, data_dir):
+def download_extract_tar(url, data_dir):
     filepath = download(url, data_dir)
     extract_tar(filepath, data_dir)
-    os.remove(filepath)
 
 
 # Download CUB dataset
@@ -103,15 +79,31 @@ def download_cub(dirpath):
 
     # Images
     url = 'http://www.vision.caltech.edu/visipedia-data/CUB-200/images.tgz'
-    download_extract(url, data_dir)
+    download_extract_tar(url, data_dir)
 
     # Labels
     url = 'http://www.vision.caltech.edu/visipedia-data/CUB-200/lists.tgz'
-    download_extract(url, data_dir)
+    download_extract_tar(url, data_dir)
 
     # Annotations
     url = 'http://www.vision.caltech.edu/visipedia-data/CUB-200/attributes.tgz'
-    download_extract(url, data_dir)
+    download_extract_tar(url, data_dir)
+
+
+# Download Oxford-102 dataset
+def download_oxford_102(dirpath):
+    data_dir = os.path.join(dirpath, 'oxford-102')
+    if os.path.exists(data_dir):
+        print('Found Oxford-102 - skip')
+        return
+    else:
+        os.mkdir(data_dir)
+
+    url = 'http://www.robots.ox.ac.uk/~vgg/data/flowers/102/102flowers.tgz'
+    download_extract_tar(url, data_dir)
+
+    url = 'http://www.robots.ox.ac.uk/~vgg/data/flowers/102/imagelabels.mat'
+    download(url, data_dir)
 
 
 def prepare_data_dir(path='./data'):
