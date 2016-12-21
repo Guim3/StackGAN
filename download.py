@@ -112,7 +112,7 @@ def prepare_data_dir(path='./data'):
 if __name__ == '__main__':
     args = parser.parse_args()
     if args.path is None:
-        args.path = './data'
+        args.path = './datasets'
     prepare_data_dir(args.path)
 
     if 'cub' in args.datasets:
