@@ -80,7 +80,7 @@ def download_cub(data_dir):
         print('Found CUB - skip')
         return
 
-    url = '0B-y41dOfPRwRVzl0cHlWUHdHOG8'
+    url = '0B-y41dOfPRwROVBWUjlpM1BhbzQ'
     download_extract_tar(url, data_dir)
 
 
@@ -90,7 +90,7 @@ def download_oxford_102(data_dir):
         print('Found Oxford-102 - skip')
         return
 
-    url = '0B-y41dOfPRwRRlhpUm1LaVUxZnM'
+    url = '0B-y41dOfPRwRUzVxU3pMTEtaT1U'
     download_extract_tar(url, data_dir)
 
 
