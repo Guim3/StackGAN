@@ -1,5 +1,6 @@
 import os  # for reading files and directories
 import numpy as np  # for arrays
+from scipy import misc  # Read images
 
 """DatasetReader: reads dataset images and texts into numpy arrays.
 Also, an optional normalization can be applied over all the data."""
@@ -47,18 +48,24 @@ class DatasetReader:
 
     def __read_cub_dataset(self):
 
-        assert self.__path + "/images_and_texts", "Didn't find images_and_texts folder in %s" % self.__path
+        data_path = os.path.join(self.__path + "/images_and_texts/")
+        assert data_path, "Didn't find images_and_texts folder in %s" % self.__path
+
+        # Output variables
+        images = []
+        texts = []
+        labels = []
 
         # List all files
-        folder_list = os.listdir(self.__path + "/images_and_texts")
+        folder_list = os.listdir(data_path)
         folder_list.sort()
-        folder_iterator = filter(lambda element: os.path.isdir(self.__path + "/images_and_texts/" + element), folder_list)
+        folder_iterator = filter(lambda element: os.path.isdir(data_path + element), folder_list)
 
         label_idx = 0
         for folder in folder_iterator: # Every folder contains images from the same label / class
 
             # List all images and text files within the folder
-            file_list = os.listdir(self.__path + "/images_and_texts/" + folder)
+            file_list = os.listdir(data_path + folder)
             file_list.sort() # Order is important because image and text files need to match
 
             # Filter images and texts using their extension
@@ -75,11 +82,18 @@ class DatasetReader:
                         " It seems that some file is missing, you should check or download again the CUB dataset.") \
                         % (im_file, txt_file)
 
+                element_path = os.path.join(data_path, folder)
+
                 # Read image
+                images.append( misc.imread(os.path.join(element_path, im_file)))
 
                 # Read texts
+                with open(os.path.join(element_path, txt_file), 'r') as f:
+                    lines = f.readlines()
+                texts.append(lines)
 
                 # Set label
+                labels.append(label_idx)
 
             label_idx += 1
 
