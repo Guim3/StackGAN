@@ -12,7 +12,7 @@ class ReadDataset:
 
         # Check that dataset type is valid
         dataset = dataset.lower()
-        assert dataset == 'cub' or dataset == 'oxford-102', "Dataset not recognized: %s. Must be 'cub' or 'oxford'" % dataset
+        assert dataset == 'cub' or dataset == 'oxford-102', "Dataset not recognized: %s. Must be 'cub' or 'oxford-102'" % dataset
         self.__dataset = dataset
 
         # Initialize path, if not specified
