@@ -1,5 +1,4 @@
 import os  # for reading files and directories
-import numpy as np  # for arrays
 from scipy import misc  # Read images
 
 """DatasetReader: reads dataset images and texts into numpy arrays.
@@ -36,17 +35,17 @@ class DatasetReader:
             · texts: numpy array NxM, where M is the dimensionality of the texts.
             · labels: """
 
-        if self.__dataset == 'cub':
-            images, texts, labels = self.__read_cub_dataset()
+        if self.__dataset == 'cub' or self.__dataset == 'oxford-102':
+            images, texts, labels = self.__read_cub_oxford_dataset()
         else:
-            images, texts, labels = self.__read_oxford_dataset()
+            raise NameError('Not implemented dataset')
 
         # The normalization can be performed here as long as the image format of both datasets is the same.
         # If not, normalization will be performed inside each dataset specific methods.
 
         return images, texts, labels
 
-    def __read_cub_dataset(self):
+    def __read_cub_oxford_dataset(self):
 
         data_path = os.path.join(self.__path + "/images_and_texts/")
         assert data_path, "Didn't find images_and_texts folder in %s" % self.__path
@@ -99,9 +98,6 @@ class DatasetReader:
 
         return images, texts, labels
 
-
-    def __read_oxford_dataset(self):
-        pass
 
 if __name__ == '__main__':
     rd = DatasetReader('cub')
