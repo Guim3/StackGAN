@@ -89,13 +89,6 @@ class DatasetReader:
     def __read_oxford_dataset(self):
         pass
 
-    def method(self):
-        """Input:
-                - blabla:
-           Output:
-                - blabla: """
-        pass
-
 if __name__ == '__main__':
     rd = DatasetReader('cub')
     rd.read()
