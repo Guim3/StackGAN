@@ -45,6 +45,50 @@ class DatasetReader:
 
         return images, texts, labels
 
+    def __read_cub_dataset(self):
+
+        assert self.__path + "/images_and_texts", "Didn't find images_and_texts folder in %s" % self.__path
+
+        # List all files
+        folder_list = os.listdir(self.__path + "/images_and_texts")
+        folder_list.sort()
+        folder_iterator = filter(lambda element: os.path.isdir(self.__path + "/images_and_texts/" + element), folder_list)
+
+        label_idx = 0
+        for folder in folder_iterator: # Every folder contains images from the same label / class
+
+            # List all images and text files within the folder
+            file_list = os.listdir(self.__path + "/images_and_texts/" + folder)
+            file_list.sort() # Order is important because image and text files need to match
+
+            # Filter images and texts using their extension
+            im_iterator = filter(lambda x: x.endswith(('.jpg')), file_list)
+            txt_iterator = filter(lambda x: x.endswith(('.txt')), file_list)
+
+            for im_file, txt_file in zip(im_iterator, txt_iterator):
+
+                # Sanity check: make sure image and text file match
+                tmp1 = im_file
+                tmp2 = txt_file
+                assert tmp1.rsplit( ".", 1)[0] == tmp2.rsplit( ".", 1)[0], ("Image '%s' and text file '%s' don't " + \
+                         "have the same name.\n" + \
+                        " It seems that some file is missing, you should check or download again the CUB dataset.") \
+                        % (im_file, txt_file)
+
+                # Read image
+
+                # Read texts
+
+                # Set label
+
+            label_idx += 1
+
+        return images, texts, labels
+
+
+    def __read_oxford_dataset(self):
+        pass
+
     def method(self):
         """Input:
                 - blabla:
