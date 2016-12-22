@@ -97,4 +97,5 @@ class DatasetReader:
         pass
 
 if __name__ == '__main__':
-    pass
+    rd = DatasetReader('cub')
+    rd.read()
