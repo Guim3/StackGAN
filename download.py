@@ -10,7 +10,7 @@ Downloads the following:
 import os
 import sys
 import argparse
-from six.moves import urllib
+import requests
 import tarfile
 
 
@@ -20,36 +20,42 @@ parser.add_argument('datasets', metavar='D', type=str.lower, nargs='+', choices=
 parser.add_argument('-p', '--path', metavar='dir', type=str, nargs=1,
                    help='path to store the data (default ./data)')
 
+# Downloat a file from google drive given its id and the destination file.
+def download_file_from_google_drive(id, destination):
+    url = 'https://docs.google.com/uc?export=download'
 
-def download(url, dirpath):
-    filename = url.split('/')[-1]
-    filepath = os.path.join(dirpath, filename)
-    u = urllib.request.urlopen(url)
-    f = open(filepath, 'wb')
-    filesize = int(u.headers["Content-Length"])
-    print("Downloading: %s Bytes: %s" % (filename, filesize))
+    session = requests.Session()
 
-    downloaded = 0
-    block_sz = 8192
-    status_width = 70
-    while True:
-        buf = u.read(block_sz)
-        if not buf:
-            print('')
-            break
-        else:
-            print('', end='\r')
-        downloaded += len(buf)
-        f.write(buf)
-        status = (("[%-" + str(status_width + 1) + "s] %3.2f%%") %
-            ('=' * int(float(downloaded) / filesize * status_width) + '>', downloaded * 100. / filesize))
-        print(status, end='')
-        sys.stdout.flush()
-    f.close()
-    return filepath
+    response = session.get(url, params = { 'id' : id }, stream = True)
+    token = get_confirm_token(response)
+
+    if token:
+        params = { 'id' : id, 'confirm' : token }
+        response = session.get(url, params = params, stream = True)
+
+    save_response_content(response, destination)
 
 
-# Extract
+# Confirm tokens from website
+def get_confirm_token(response):
+    for key, value in response.cookies.items():
+        if key.startswith('download_warning'):
+            return value
+
+    return None
+
+
+# Save the content of a given response from google drive
+def save_response_content(response, destination):
+    chunk_size = 32768
+
+    with open(destination, "wb") as f:
+        for chunk in response.iter_content(chunk_size):
+            if chunk:  # filter out keep-alive new chunks
+                f.write(chunk)
+
+
+# Extract .tar.gz and .tgz files
 def extract_tar(tar_path, extract_path='.'):
     tar = tarfile.open(tar_path, 'r')
     for item in tar:
@@ -62,47 +68,30 @@ def extract_tar(tar_path, extract_path='.'):
 
 
 # Download and extracts the fila at url
-def download_extract_tar(url, data_dir):
-    filepath = download(url, data_dir)
+def download_extract_tar(id, data_dir):
+    filepath = os.path.join(data_dir, 'aux.tar.gz')
+    download_file_from_google_drive(id, filepath)
     extract_tar(filepath, data_dir)
 
 
 # Download CUB dataset
-def download_cub(dirpath):
-    data_dir = os.path.join(dirpath, 'cub')
-    if os.path.exists(data_dir):
+def download_cub(data_dir):
+    if os.path.exists(os.path.join(data_dir, 'cub')):
         print('Found CUB - skip')
         return
-    else:
-        os.mkdir(data_dir)
 
-    # Images
-    url = 'http://www.vision.caltech.edu/visipedia-data/CUB-200/images.tgz'
-    download_extract_tar(url, data_dir)
-
-    # Labels
-    url = 'http://www.vision.caltech.edu/visipedia-data/CUB-200/lists.tgz'
-    download_extract_tar(url, data_dir)
-
-    # Annotations
-    url = 'http://www.vision.caltech.edu/visipedia-data/CUB-200/attributes.tgz'
+    url = '0B-y41dOfPRwRVzl0cHlWUHdHOG8'
     download_extract_tar(url, data_dir)
 
 
 # Download Oxford-102 dataset
-def download_oxford_102(dirpath):
-    data_dir = os.path.join(dirpath, 'oxford-102')
-    if os.path.exists(data_dir):
+def download_oxford_102(data_dir):
+    if os.path.exists(os.path.join(data_dir, 'oxford-102')):
         print('Found Oxford-102 - skip')
         return
-    else:
-        os.mkdir(data_dir)
 
-    url = 'http://www.robots.ox.ac.uk/~vgg/data/flowers/102/102flowers.tgz'
+    url = '0B-y41dOfPRwRRlhpUm1LaVUxZnM'
     download_extract_tar(url, data_dir)
-
-    url = 'http://www.robots.ox.ac.uk/~vgg/data/flowers/102/imagelabels.mat'
-    download(url, data_dir)
 
 
 def prepare_data_dir(path='./data'):
