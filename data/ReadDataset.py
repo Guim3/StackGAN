@@ -28,6 +28,23 @@ class DatasetReader:
 
         self.__normalize = normalize
 
+    def read(self):
+        """Reads the images and texts of the dataset found in self.__path.
+        Output:
+            · images: numpy array N x height x width x color, where N is the number of samples
+            · texts: numpy array NxM, where M is the dimensionality of the texts.
+            · labels: """
+
+        if self.__dataset == 'cub':
+            images, texts, labels = self.__read_cub_dataset()
+        else:
+            images, texts, labels = self.__read_oxford_dataset()
+
+        # The normalization can be performed here as long as the image format of both datasets is the same.
+        # If not, normalization will be performed inside each dataset specific methods.
+
+        return images, texts, labels
+
     def method(self):
         """Input:
                 - blabla:
