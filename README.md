@@ -10,6 +10,10 @@ This is the TensorFlow implementation of the StackGAN proposed by Han Zhang et a
 `python3 download.py cub`
 `python3 download.py oxford-102`
 
+or
+
+`python3 download.py cub oxford-102`
+
 Alternatively, you can manually download the data here: [*CUB*][2] and [*Oxford-102*][3]. Once downloaded, place it on ./datasets folder.
 
 ## Work under construction!
