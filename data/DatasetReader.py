@@ -42,8 +42,10 @@ class DatasetReader:
         else:
             raise NameError('Dataset not implemented')
 
-        # The normalization can be performed here as long as the image format of both datasets is the same.
+        # The normalization can be performed here as long as the image format of all datasets is the same.
         # If not, normalization will be performed inside each dataset specific methods.
+        if self.__normalize:
+            images = ((images / 255) * 2) - 1 # change[0, 255] to [-1, 1]
 
         return images, texts, labels
 
