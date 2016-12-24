@@ -35,10 +35,12 @@ class DatasetReader:
             · texts: numpy array NxM, where M is the dimensionality of the texts.
             · labels: """
 
+        print('Reading dataset...')
+
         if self.__dataset == 'cub' or self.__dataset == 'oxford-102':
             images, texts, labels = self.__read_cub_oxford_dataset()
         else:
-            raise NameError('Not implemented dataset')
+            raise NameError('Dataset not implemented')
 
         # The normalization can be performed here as long as the image format of both datasets is the same.
         # If not, normalization will be performed inside each dataset specific methods.
@@ -48,7 +50,7 @@ class DatasetReader:
     def __read_cub_oxford_dataset(self):
 
         data_path = os.path.join(self.__path + "/images_and_texts/")
-        assert data_path, "Didn't find images_and_texts folder in %s" % self.__path
+        assert data_path, "Didn't find 'images_and_texts' folder in %s" % self.__path
 
         # Output variables
         images = []
@@ -78,8 +80,8 @@ class DatasetReader:
                 tmp2 = txt_file
                 assert tmp1.rsplit( ".", 1)[0] == tmp2.rsplit( ".", 1)[0], ("Image '%s' and text file '%s' don't " + \
                          "have the same name.\n" + \
-                        " It seems that some file is missing, you should check or download again the CUB dataset.") \
-                        % (im_file, txt_file)
+                        " It seems that some file is missing, you should check or download again the %s dataset.") \
+                        % (im_file, txt_file, self.__dataset)
 
                 element_path = os.path.join(data_path, folder)
 
@@ -94,8 +96,12 @@ class DatasetReader:
                 # Set label
                 labels.append(label_idx)
 
+            print("\t\t%d/%d" % (label_idx, len(folder_list)), end='\r')
+
+
             label_idx += 1
 
+        print("Done!")
         return images, texts, labels
 
 
